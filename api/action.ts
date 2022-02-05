@@ -70,9 +70,13 @@ const handler: VercelApiHandler = async (request, response) => {
     } else if (act === 'login') {
         const { name, pass } = request.query;
 
-        const res = await axios(`${BASE_URL}?act=login&name=${name}&pass=${pass}&challstr=${challstr}`);
+        try {
+            const res = await axios(`${BASE_URL}?act=login&name=${name}&pass=${pass}&challstr=${challstr}`);
 
-        response.send(res.data);
+            response.send(res.data);
+        } catch (err) {
+            response.status(500).json({ error: 'Server Error', message: err.message })
+        }
     } else {
         // redirect all values and method to BASE_URL
         const { method, url, headers, body } = request;

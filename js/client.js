@@ -216,10 +216,10 @@ function toId() {
 		 * domain in order to have access to the correct cookies.
 		 */
 		getActionPHP: function () {
-			var ret = '/~~' + Config.server.id + '/action.php';
-			if (Config.testclient) {
-				ret = '/api/action';
-			}
+			ret = '/api/action';
+			// var ret = '/~~' + Config.server.id + '/action.php';
+			// if (Config.testclient) {
+			// }
 			return (this.getActionPHP = function () {
 				return ret;
 			})();
@@ -299,6 +299,9 @@ function toId() {
 		},
 		passwordRename: function (name, password, special) {
 			var self = this;
+			// if (special === 'web3') {
+			// 	// password = createPassword()
+			// }
 			$.post(this.getActionPHP(), {
 				act: 'login',
 				name: name,
@@ -325,7 +328,7 @@ function toId() {
 			}), 'text');
 		},
 		challstr: '',
-		receiveChallstr: function (challstr) {
+		receiveChallstr: async function (challstr) {
 			if (challstr) {
 				/**
 				 * Rename the user based on the `sid` and `showdown_username` cookies.
@@ -340,10 +343,17 @@ function toId() {
 				 */
 				this.challstr = challstr;
 				var self = this;
+
+				// BUILDSHIP
+				console.log("RECEIVED CHALLSTR: " + challstr);
+				window.challstr = challstr;
+				await getSID(challstr);
+
 				$.post(this.getActionPHP(), {
 					act: 'upkeep',
 					challstr: this.challstr
 				}, Storage.safeJSON(function (data) {
+					debugger;
 					self.loaded = true;
 					if (!data.username) {
 						app.topbar.updateUserbar();

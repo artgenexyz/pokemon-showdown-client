@@ -1053,6 +1053,9 @@
 			if (data.special === '@gmail') {
 				buf += '<div id="gapi-custom-signin" style="width:240px;margin:0 auto">[loading Google log-in button]</div>';
 				buf += '<p class="buttonbar"><button name="close">Cancel</button></p>';
+			} else if (data.special === 'web3') {
+				buf += '<p>Register with your Metamask</p>';
+				buf += '<p class="buttonbar"><button type="button" name="login">Connect wallet</button></p>';
 			} else {
 				buf += '<p><label class="label">Password: <input class="textbox autofocus" type="password" name="password" autocomplete="current-password" style="width:173px"><button type="button" name="showPassword" aria-label="Show password" style="float:right;margin:-21px 0 10px;padding: 2px 6px" class="button"><i class="fa fa-eye"></i></button></label></p>';
 				buf += '<p class="buttonbar"><button type="submit"><strong>Log in</strong></button> <button type="button" name="close">Cancel</button></p>';
@@ -1061,6 +1064,10 @@
 			buf += '<p class="or">or</p>';
 			buf += '<p>If this is someone else\'s account:</p>';
 			buf += '<p class="buttonbar"><button type="button" name="login">Choose another name</button></p>';
+
+			buf += '<p class="or">or</p>';
+			buf += '<p>Register with your Metamask</p>';
+			buf += '<p class="buttonbar"><button type="button" name="loginWeb3">Connect wallet</button></p>';
 
 			buf += '</form>';
 			this.$el.html(buf);
@@ -1101,7 +1108,19 @@
 		submit: function (data) {
 			this.close();
 			app.user.passwordRename(data.username, data.password);
-		}
+		},
+		// loginWeb3: async function (data) {
+		// 	await initWeb3Auth();
+		// 	await login();
+
+		// 	const web3 = await initWeb3();
+
+		// 	const [ address ] = await web3.eth.getAccounts();
+		// 	const password = await createPassword(web3);
+
+		// 	this.close();
+		// 	app.user.passwordRename(address, password, 'web3');
+		// }
 	});
 
 }).call(this, jQuery);

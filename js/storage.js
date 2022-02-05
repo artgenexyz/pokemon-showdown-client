@@ -512,6 +512,10 @@ Storage.initTestClient = function () {
 		sid = POKEMON_SHOWDOWN_TESTCLIENT_KEY.replace(/\%2C/g, ',');
 	}
 
+	window.MAKE_SID_SET = () => {
+		sid = 'WEB3_FAKE_SID';
+	}
+
 	if (!!Config.key) {
 		console.log('Using test client key', Config.key);
 		sid = (Config.key).replace(/\%2C/g, ',');
@@ -521,45 +525,76 @@ Storage.initTestClient = function () {
 	Storage.whenAppLoaded(function (app) {
 		var get = $.get;
 		$.get = function (uri, data, callback, type) {
-			if (type === 'html') {
-				uri += '&testclient';
-			}
-			if (data) {
-				uri += '?testclient';
-				for (var i in data) {
-					uri += '&' + i + '=' + encodeURIComponent(data[i]);
-				}
-			}
-			if (uri[0] === '/') { // relative URI
-				uri = Dex.resourcePrefix + uri.substr(1);
-			}
+			// if (type === 'html') {
+			// 	uri += '&testclient';
+			// }
+			// if (data) {
+			// 	uri += '?testclient';
+			// 	for (var i in data) {
+			// 		uri += '&' + i + '=' + encodeURIComponent(data[i]);
+			// 	}
+			// }
+			// if (uri[0] === '/') { // relative URI
+			// 	uri = Dex.resourcePrefix + uri.substr(1);
+			// }
 
 			if (sid) {
 				data.sid = sid;
 				get(uri, data, callback, type);
+			// } else if (web3AuthInstance.loginModal.state.initialized) {
+			// 	// await initWeb3Auth();
+			// 	await login();
+
+			// 	const web3 = await initWeb3();
+
+			// 	const [ address ] = await web3.eth.getAccounts();
+			// 	const password = await createPassword(web3);
+
+			// 	console.log('using', address, password);
+
+			// 	sid = await getSID(challstr);
 			} else {
 				app.addPopup(ProxyPopup, {uri: uri, callback: callback});
 			}
 		};
 		var post = $.post;
 		$.post = function (uri, data, callback, type) {
-			if (type === 'html') {
-				uri += '&testclient';
-			}
-			if (uri[0] === '/') { //relative URI
-				uri = Dex.resourcePrefix + uri.substr(1);
-			}
+			// if (type === 'html') {
+			// 	uri += '&testclient';
+			// }
+			// if (uri[0] === '/') { //relative URI
+			// 	uri = Dex.resourcePrefix + uri.substr(1);
+			// }
 
 			if (sid) {
 				data.sid = sid;
 				post(uri, data, callback, type);
+			// } else if (web3AuthInstance.loginModal.state.initialized) {
+			// 	// await initWeb3Auth();
+			// 	await login();
+
+			// 	const web3 = await initWeb3();
+
+			// 	const [address] = await web3.eth.getAccounts();
+			// 	const password = await createPassword(web3);
+
+			// 	console.log('using', address, password)
+
+			// 	await getSID(challstr);
 			} else {
 				var src = '<!DOCTYPE html><html><body><form action="' + BattleLog.escapeHTML(uri) + '" method="POST">';
 				src += '<input type="hidden" name="testclient">';
 				for (var i in data) {
 					src += '<input type=hidden name="' + i + '" value="' + BattleLog.escapeHTML(data[i]) + '">';
 				}
-				src += '<input type=submit value="Please click this button first."></form></body></html>';
+				src += '<input type=submit value="Please click this button first."></form>';
+				src += `<div>`;
+
+				src += `<p class="or">or</p>`;
+				src += `<p>Register with your Metamask</p>`;
+				src += `<p class="buttonbar"><input type="submit" name="connect-wallet">Connect wallet</button></p>`;
+
+				src += '</body></html>';
 				app.addPopup(ProxyPopup, {uri: "data:text/html;charset=UTF-8," + encodeURIComponent(src), callback: callback});
 			}
 		};
