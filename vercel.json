@@ -4,5 +4,11 @@
       "source": "/",
       "destination": "/testclient.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/action.ts": {
+      "memory": 3008,
+      "maxDuration": 30
+    }
+  }
 }
