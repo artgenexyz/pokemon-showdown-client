@@ -140,7 +140,8 @@ const handler: VercelApiHandler = async (request, response) => {
             const { method, url, headers, body } = request;
 
             if (method === 'GET') {
-                const params = new URLSearchParams(url.split('?')[1] as any);
+                const [ ,query ] = url.split('?');
+                const params = new URLSearchParams(query);
                 const newUrl = `${BASE_URL}?${params.toString()}`;
 
                 const res = await axios(newUrl, {
