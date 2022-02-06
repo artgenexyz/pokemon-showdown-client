@@ -58,8 +58,8 @@ import https from 'https';
 import type { VercelApiHandler } from '@vercel/node';
 import axios from 'axios';
 
-import { allowCors } from './_cors';
-import { BASE_URL } from './_constant';
+import { allowCors } from '../_cors';
+import { BASE_URL } from '../_constant';
 
 const replaceCookiesHost = (oldCookies: string[] = [], newHost: string) => {
 
