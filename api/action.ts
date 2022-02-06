@@ -34,7 +34,8 @@ Host: play.pokemonshowdown.com
 Content-Type: application/x-www-form-urlencoded; encoding=UTF-8
 
 act=login&name=bongsniffer69&pass=notmyrealpasswordlol&challstr=4%7C...
-The server will return what's called an assertion as a response. It is another JSON object prefixed with "]". Most of the metadata included isn't important; here's all you need to care about, given a variable data containing the JSON object:
+The server will return what's called an assertion as a response. It is another JSON object prefixed with "]".
+Most of the metadata included isn't important; here's all you need to care about, given a variable data containing the JSON object:
 
 if data.curuser.loggedin is false, either the username, password, or challstr was incorrect
 if data.assertion starts with ";;", any other type of error occurred while logging in
@@ -62,139 +63,138 @@ import { BASE_URL } from './_constant';
 
 const replaceCookiesHost = (oldCookies: string[] = [], newHost: string) => {
 
-    if (!oldCookies.length) return '';
+		if (!oldCookies.length) return '';
 
-    const sid = oldCookies.find((cookie) => cookie.startsWith('sid='));
+		const sid = oldCookies.find(cookie => cookie.startsWith('sid='));
 
-    if (!sid) {
-        return '';
-    }
+		if (!sid) {
+				return '';
+		}
 
-    // parse sid cookie and change domain to request origin
-    const sidCookie = sid.split(';')[0];
-    const sidCookieParts = sidCookie.split('=');
-    const sidCookieName = sidCookieParts[0];
-    const sidCookieValue = sidCookieParts[1];
+		// parse sid cookie and change domain to request origin
+		const sidCookie = sid.split(';')[0];
+		const sidCookieParts = sidCookie.split('=');
+		const sidCookieName = sidCookieParts[0];
+		const sidCookieValue = sidCookieParts[1];
 
-    // extract host from referrer
-    const sidCookieHost = newHost;
+		// extract host from referrer
+		const sidCookieHost = newHost;
 
-    const newSidCookie = `${sidCookieName}=${sidCookieValue}; Domain=${sidCookieHost}; Path=/; Secure; HttpOnly; SameSite=None`;
+		const newSidCookie = `${sidCookieName}=${sidCookieValue}; Domain=${sidCookieHost}; Path=/; Secure; HttpOnly; SameSite=None`;
 
-    console.log('newSidCookie', newSidCookie);
+		console.log('newSidCookie', newSidCookie);
 
-    return newSidCookie
-}
+		return newSidCookie;
+};
 
 const replaceHost = (request: any) => request.headers.referer.replace(/^https?:\/\//, '').replace(/\/.*/, '');
 
 const handler: VercelApiHandler = async (request, response) => {
-    const { act, challstr } = request.query;
+		const { act, challstr } = request.query;
 
-    const httpsAgent = new https.Agent({ rejectUnauthorized: false });
+		const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
-    // print request query
+		// print request query
 
-    console.log('request.query', request.query);
+		console.log('request.query', request.query);
 
-    // print request headers
+		// print request headers
 
-    console.log('request.headers', request.headers);
+		console.log('request.headers', request.headers);
 
-    try {
-        if (act === 'getassertion') {
-            const { userid } = request.query;
+		try {
+				if (act === 'getassertion') {
+						const { userid } = request.query;
 
-            const res = await axios(`${BASE_URL}?act=getassertion&userid=${userid}&challstr=${challstr}`, { httpsAgent });
+						const res = await axios(`${BASE_URL}?act=getassertion&userid=${userid}&challstr=${challstr}`, { httpsAgent });
 
-            // print cookies
-            console.log('COOKIES', res.headers['set-cookie']);
+						// print cookies
+						console.log('COOKIES', res.headers['set-cookie']);
 
-            const newHost = replaceHost(request);
-            const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
+						const newHost = replaceHost(request);
+						const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
 
-            response.setHeader('Set-Cookie', [newSidCookie]);
-            response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
+						response.setHeader('Set-Cookie', [newSidCookie]);
+						response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
 
-            response.send(res.data);
-        } else if (act === 'login') {
-            const { name, pass } = request.query;
+						response.send(res.data);
+				} else if (act === 'login') {
+						const { name, pass } = request.query;
 
-            // TODO: CHECK that pass is a signature by the same address as name
+						// TODO: CHECK that pass is a signature by the same address as name
 
-            const res = await axios(`${BASE_URL}?act=login&name=${name}&pass=${pass}&challstr=${challstr}`, { httpsAgent });
+						const res = await axios(`${BASE_URL}?act=login&name=${name}&pass=${pass}&challstr=${challstr}`, { httpsAgent });
 
-            // print cookies
-            console.log('COOKIES', res.headers['set-cookie']);
+						// print cookies
+						console.log('COOKIES', res.headers['set-cookie']);
 
-            const newHost = replaceHost(request);
-            const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
+						const newHost = replaceHost(request);
+						const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
 
-            response.setHeader('Set-Cookie', [newSidCookie]);
-            response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
+						response.setHeader('Set-Cookie', [newSidCookie]);
+						response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
 
-            response.send(res.data);
+						response.send(res.data);
 
-        } else {
-            // redirect all values and method to BASE_URL
-            const { method, url, headers, body } = request;
+				} else {
+						// redirect all values and method to BASE_URL
+						const { method, url, headers, body } = request;
 
-            if (method === 'GET') {
-                const [ ,query ] = url?.split('?');
-                const params = new URLSearchParams(query);
-                const newUrl = `${BASE_URL}?${params.toString()}`;
+						if (method === 'GET') {
+								const [ , query ] = url?.split('?') || [];
+								const params = new URLSearchParams(query);
+								const newUrl = `${BASE_URL}?${params.toString()}`;
 
-                const res = await axios(newUrl, {
-                    method: method as any,
-                    headers: {
-                        ...(headers as any),
-                    },
-                    httpsAgent,
-                });
+								const res = await axios(newUrl, {
+										method: method as any,
+										headers: {
+												...(headers as any),
+										},
+										httpsAgent,
+								});
 
-                const newHost = replaceHost(request);
-                const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
+								const newHost = replaceHost(request);
+								const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
 
-                response.setHeader('Set-Cookie', [newSidCookie]);
-                response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
+								response.setHeader('Set-Cookie', [newSidCookie]);
+								response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
 
-                response.send(res.data);
-            } else {
-                console.log('HEADERS', headers);
-                console.log('BODY', body);
+								response.send(res.data);
+						} else {
+								console.log('HEADERS', headers);
+								console.log('BODY', body);
 
-                const res = await axios(`${BASE_URL}`, {
-                    method: method as any,
-                    headers: {
-                        ...(Object.keys(headers).reduce((acc, cur) => {
-                            return {
-                                ...acc,
-                                [cur]: headers[cur],
-                            }
-                        }, {}) as ({ [ key: string ]: string })),
-                    },
-                    data: body,
-                    httpsAgent,
-                });
+								const res = await axios(`${BASE_URL}`, {
+										method: method as any,
+										headers: {
+												...(Object.keys(headers).reduce((acc, cur) => {
+														return {
+																...acc,
+																[cur]: headers[cur],
+														};
+												}, {}) as ({ [ key: string ]: string })),
+										},
+										data: body,
+										httpsAgent,
+								});
 
-                const newHost = replaceHost(request);
-                const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
+								const newHost = replaceHost(request);
+								const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
 
-                response.setHeader('Set-Cookie', [newSidCookie]);
-                response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
+								response.setHeader('Set-Cookie', [newSidCookie]);
+								response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
 
-                response.send(res.data);
-            }
-        }
+								response.send(res.data);
+						}
+				}
 
-    } catch (err: any) {
-        console.log(err.message);
-        // console.log(err.request);
+		} catch (err: any) {
+				console.log(err.message);
+				// console.log(err.request);
 
-        response.status(500).json({ error: 'Server Error', message: err.message })
-    }
+				response.status(500).json({ error: 'Server Error', message: err.message });
+		}
 
-}
-
+};
 
 export default allowCors(handler);

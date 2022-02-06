@@ -13,7 +13,7 @@
     "test": "npm run lint && tsc && node build && mocha test/*.js",
     "fix": "eslint --config=.eslintrc.js --fix js/ && eslint --config=build-tools/.eslintrc.js --fix build-tools/update build-tools/build-indexes",
     "build": "node build",
-    "vercel-build": "CI=false node build full",
+    "vercel-build": "node build full",
     "build-full": "node build full"
   },
   "dependencies": {
