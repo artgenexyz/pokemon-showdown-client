@@ -52,45 +52,143 @@ For example:
 
  */
 
+import https from 'https';
+
 import type { VercelApiHandler } from '@vercel/node';
 import axios from 'axios';
 
 import { allowCors } from './_cors';
 import { BASE_URL } from './_constant';
 
+const replaceCookiesHost = (oldCookies: string[] = [], newHost: string) => {
+
+    if (!oldCookies.length) return '';
+
+    const sid = oldCookies.find((cookie) => cookie.startsWith('sid='));
+
+    if (!sid) {
+        return '';
+    }
+
+    // parse sid cookie and change domain to request origin
+    const sidCookie = sid.split(';')[0];
+    const sidCookieParts = sidCookie.split('=');
+    const sidCookieName = sidCookieParts[0];
+    const sidCookieValue = sidCookieParts[1];
+
+    // extract host from referrer
+    const sidCookieHost = newHost;
+
+    const newSidCookie = `${sidCookieName}=${sidCookieValue}; Domain=${sidCookieHost}; Path=/; Secure; HttpOnly; SameSite=None`;
+
+    console.log('newSidCookie', newSidCookie);
+
+    return newSidCookie
+}
+
+const replaceHost = (request: any) => request.headers.referer.replace(/^https?:\/\//, '').replace(/\/.*/, '');
+
 const handler: VercelApiHandler = async (request, response) => {
     const { act, challstr } = request.query;
 
-    if (act === 'getassertion') {
-        const { userid } = request.query;
+    const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
-        const res = await axios(`${BASE_URL}?act=getassertion&userid=${userid}&challstr=${challstr}`);
+    // print request query
 
-        response.send(res.data);
-    } else if (act === 'login') {
-        const { name, pass } = request.query;
+    console.log('request.query', request.query);
 
-        try {
-            const res = await axios(`${BASE_URL}?act=login&name=${name}&pass=${pass}&challstr=${challstr}`);
+    // print request headers
+
+    console.log('request.headers', request.headers);
+
+    try {
+        if (act === 'getassertion') {
+            const { userid } = request.query;
+
+            const res = await axios(`${BASE_URL}?act=getassertion&userid=${userid}&challstr=${challstr}`, { httpsAgent });
+
+            // print cookies
+            console.log('COOKIES', res.headers['set-cookie']);
+
+            const newHost = replaceHost(request);
+            const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
+
+            response.setHeader('Set-Cookie', [newSidCookie]);
+            response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
 
             response.send(res.data);
-        } catch (err) {
-            response.status(500).json({ error: 'Server Error', message: err.message })
+        } else if (act === 'login') {
+            const { name, pass } = request.query;
+
+            const res = await axios(`${BASE_URL}?act=login&name=${name}&pass=${pass}&challstr=${challstr}`, { httpsAgent });
+
+            // print cookies
+            console.log('COOKIES', res.headers['set-cookie']);
+
+            const newHost = replaceHost(request);
+            const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
+
+            response.setHeader('Set-Cookie', [newSidCookie]);
+            response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
+
+            response.send(res.data);
+
+        } else {
+            // redirect all values and method to BASE_URL
+            const { method, url, headers, body } = request;
+
+            if (method === 'GET') {
+                const params = new URLSearchParams(url.split('?')[1]);
+                const newUrl = `${BASE_URL}?${params.toString()}`;
+
+                const res = await axios(newUrl, {
+                    method: method as any,
+                    headers: {
+                        ...(headers as any),
+                    },
+                    httpsAgent,
+                });
+
+                const newHost = replaceHost(request);
+                const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
+
+                response.setHeader('Set-Cookie', [newSidCookie]);
+                response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
+
+                response.send(res.data);
+            } else {
+                console.log('HEADERS', headers);
+                console.log('BODY', body);
+
+                const res = await axios(`${BASE_URL}`, {
+                    method: method as any,
+                    headers: {
+                        ...(Object.keys(headers).reduce((acc, cur) => {
+                            return {
+                                ...acc,
+                                [cur]: headers[cur],
+                            }
+                        }, {}) as ({ [ key: string ]: string })),
+                    },
+                    data: body,
+                    httpsAgent,
+                });
+
+                const newHost = replaceHost(request);
+                const newSidCookie = replaceCookiesHost(res.headers['set-cookie'], newHost);
+
+                response.setHeader('Set-Cookie', [newSidCookie]);
+                response.setHeader('X-Buildship-Set-Cookie', [newSidCookie]);
+
+                response.send(res.data);
+            }
         }
-    } else {
-        // redirect all values and method to BASE_URL
-        const { method, url, headers, body } = request;
 
-        const res = await axios(`${BASE_URL}${url}`, {
-            method: method as any,
-            headers: {
-                ...(headers as any),
-            },
-            data: body,
-        });
+    } catch (err) {
+        console.log(err.message);
+        // console.log(err.request);
 
-        response.send(res.data);
-
+        response.status(500).json({ error: 'Server Error', message: err.message })
     }
 
 }

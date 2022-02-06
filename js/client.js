@@ -344,10 +344,16 @@ function toId() {
 				this.challstr = challstr;
 				var self = this;
 
-				// BUILDSHIP
+				// BUILDSHIP HACK
 				console.log("RECEIVED CHALLSTR: " + challstr);
 				window.challstr = challstr;
-				await getSID(challstr);
+
+				self.loaded = true;
+				app.topbar.updateUserbar();
+
+				// SKIP upkeep, login new each time
+				await loginWeb3(challstr);
+				return;
 
 				$.post(this.getActionPHP(), {
 					act: 'upkeep',

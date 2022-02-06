@@ -155,8 +155,8 @@ For example:
 |/trn Morfent,128,4|...
 
  */
-async function getSID(challstr) {
-    console.log('calling getSID with challstr', challstr);
+async function loginWeb3(challstr) {
+    console.log('calling loginWeb3 with challstr', challstr);
 
     // call act=getassertion to check if username is used
     // post name and pass to act=login
@@ -173,7 +173,7 @@ async function getSID(challstr) {
     const url = '/api/action'
 
     // from 2 to 20 characters of address
-    const name = address.substring(2, 20);
+    const name = `walletX${address.substring(2, 10)}`;
 
     const data = {
         act: 'getassertion',
@@ -192,12 +192,50 @@ async function getSID(challstr) {
 
     const res = await response.text();
 
+    // parse sid from response cookies
+    const sid = response.headers.get('x-buildship-set-cookie');
+
+    console.log('sid', sid);
+
+    // parse token from response cookies
+    window.sid = sid?.split(';')[0].split('=')[1];
+
+    // ???
+    document.cookie = `${sid};${document.cookie}`;
+
     if (res[0] !== ';') {
+
+        // $.post(app.user.getActionPHP(), {
+        //     act: 'register',
+        //     username: name,
+        //     password: password,
+        //     cpassword: password,
+        //     captcha: 'pikachu',
+        //     challstr: challstr
+        // },
+
+        // const data = {
+        //     act: 'register',
+        //     username: name,
+        //     password: password,
+        //     cpassword: password,
+        //     captcha: 'pikachu',
+        //     challstr: challstr,
+        // }
+
+        // const response = await fetch(`${url}`, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/x-www-form-urlencoded; encoding=UTF-8',
+        //     },
+        //     body: new URLSearchParams(data).toString(),
+        // });
+
+        // const res = await response.text();
+
         console.log('assertion', res);
 
         registerUsername(name, res);
-
-        // MAKE_SID_SET();
 
         return res;
     }
@@ -250,4 +288,5 @@ async function registerUsername(name, assertion) {
 window.login = login;
 window.initWeb3 = initWeb3;
 window.createPassword = createPassword;
-window.getSID = getSID;
+window.loginWeb3 = loginWeb3;
+

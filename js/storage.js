@@ -538,6 +538,10 @@ Storage.initTestClient = function () {
 			// 	uri = Dex.resourcePrefix + uri.substr(1);
 			// }
 
+			get(uri, data, callback, type);
+
+			return;
+
 			if (sid) {
 				data.sid = sid;
 				get(uri, data, callback, type);
@@ -565,6 +569,8 @@ Storage.initTestClient = function () {
 			// if (uri[0] === '/') { //relative URI
 			// 	uri = Dex.resourcePrefix + uri.substr(1);
 			// }
+			post(uri, data, callback, type);
+			return;
 
 			if (sid) {
 				data.sid = sid;
