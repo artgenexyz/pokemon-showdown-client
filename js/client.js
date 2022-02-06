@@ -216,10 +216,7 @@ function toId() {
 		 * domain in order to have access to the correct cookies.
 		 */
 		getActionPHP: function () {
-			ret = '/api/action';
-			// var ret = '/~~' + Config.server.id + '/action.php';
-			// if (Config.testclient) {
-			// }
+			var ret = '/api/action';
 			return (this.getActionPHP = function () {
 				return ret;
 			})();
@@ -328,7 +325,7 @@ function toId() {
 			}), 'text');
 		},
 		challstr: '',
-		receiveChallstr: async function (challstr) {
+		receiveChallstr: function (challstr) {
 			if (challstr) {
 				/**
 				 * Rename the user based on the `sid` and `showdown_username` cookies.
@@ -352,7 +349,7 @@ function toId() {
 				app.topbar.updateUserbar();
 
 				// SKIP upkeep, login new each time
-				await loginWeb3(challstr);
+				window.loginWeb3 && window.loginWeb3(challstr);
 				return;
 
 				$.post(this.getActionPHP(), {

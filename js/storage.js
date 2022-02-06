@@ -512,9 +512,9 @@ Storage.initTestClient = function () {
 		sid = POKEMON_SHOWDOWN_TESTCLIENT_KEY.replace(/\%2C/g, ',');
 	}
 
-	window.MAKE_SID_SET = () => {
-		sid = 'WEB3_FAKE_SID';
-	}
+	// window.MAKE_SID_SET = () => {
+	// 	sid = 'WEB3_FAKE_SID';
+	// }
 
 	if (!!Config.key) {
 		console.log('Using test client key', Config.key);
