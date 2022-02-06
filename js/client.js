@@ -692,6 +692,23 @@ function toId() {
 			Storage.whenAppLoaded.load(this);
 
 			this.initializeConnection();
+
+			window.addEventListener('message', (event) => {
+				console.log('PSC: app: receive message', event.origin, event.data);
+
+				const { roomid, dest, data } = event.data;
+
+				if (dest !== 'showdown-client') return;
+				if (roomid) {
+					console.log('PSC: app: skipping message because roomid is not set', data);
+					return;
+				}
+
+				console.log('PSC: filtered', data)
+
+				this.send(data);
+
+			}, false);
 		},
 		/**
 		 * Start up the client, including loading teams and preferences,
@@ -926,6 +943,10 @@ function toId() {
 		 * Receive from sim server
 		 */
 		receive: function (data) {
+			// Dont send messages from app, only send from room
+			const _message = { dest: 'webxr', data: data };
+			window.top.postMessage(_message, "*");
+
 			var roomid = '';
 			var autojoined = false;
 			if (data.charAt(0) === '>') {
@@ -2109,6 +2130,20 @@ function toId() {
 			if (!(options && options.nojoin)) this.join();
 			if (options && options.title) this.title = options.title;
 			this.el.id = 'room-' + this.id;
+
+			window.addEventListener('message', (event) => {
+				console.log('PSC: app: receive message', event.origin, event.data);
+
+				const { dest, data, roomid } = event.data;
+
+				if (dest !== 'showdown-client') return;
+				if (roomid !== this.id) return;
+
+				console.log('PSC: filtered', data)
+
+				this.send(data);
+
+			}, false);
 		},
 		dispatchClickButton: function (e) {
 			var target = e.currentTarget;
@@ -2142,7 +2177,9 @@ function toId() {
 		 * Receive from sim server
 		 */
 		receive: function (data) {
-			//
+			// Dont send messages from app, only send from room
+			// const _message = { dest: 'webxr', data: data };
+			// window.top.postMessage(_message, "*");
 		},
 
 		// layout
