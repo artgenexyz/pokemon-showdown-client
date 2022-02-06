@@ -120,6 +120,8 @@ const handler: VercelApiHandler = async (request, response) => {
         } else if (act === 'login') {
             const { name, pass } = request.query;
 
+            // TODO: CHECK that pass is a signature by the same address as name
+
             const res = await axios(`${BASE_URL}?act=login&name=${name}&pass=${pass}&challstr=${challstr}`, { httpsAgent });
 
             // print cookies

@@ -102,6 +102,10 @@ async function createPassword (web3) {
     return sig1
 }
 
+// async function createPasswordEIP712(web3) {
+//      https://gist.github.com/JTraversa/a88edab6f7d9457317928483e78d8681
+// }
+
 /**
  *
 
