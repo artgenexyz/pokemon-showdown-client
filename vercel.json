@@ -4,5 +4,15 @@
       "source": "/",
       "destination": "/testclient.html"
     }
+  ],
+  "builds": [
+    {
+      "src": "api/action.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "**/*.*",
+      "use": "@vercel/static"
+    }
   ]
 }
