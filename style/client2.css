@@ -585,6 +585,7 @@ p.or:after {
 .leftmenu {
 	padding: 40px 0 0 0;
 	width: 324px;
+	margin: auto;
 }
 .rightmenu {
 	position: absolute;

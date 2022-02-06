@@ -21,6 +21,14 @@ body {
 	background-size: cover;
 }
 
+.news-embed {
+	visibility: hidden;
+}
+
+.mainmenu3 {
+	visibility: hidden;
+}
+
 .pad {
 	margin: 0;
 	padding: 5px 15px;
@@ -263,6 +271,7 @@ select {
  *********************************************************/
 
 .header {
+	visibility: hidden;
 	position: relative;
 	height: 50px;
 	background: url(../fx/client-topbar-bg.png) repeat-x left top scroll;
@@ -664,7 +673,7 @@ span.header-username:hover {
 .ps-room {
 	position: absolute;
 	display: block;
-	top: 56px;
+	top: 0px;
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -676,6 +685,9 @@ span.header-username:hover {
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
 	overflow-scrolling: touch;
+}
+.unscrollable {
+	overflow: hidden;
 }
 .ps-room.ps-room-light {
 	background: rgba(242,247,250,.85);
@@ -1097,6 +1109,10 @@ p.or:after {
 	color: white;
 	text-shadow: 0 1px 0 black;
 	text-align: center;
+}
+
+#menugroup-2, #menugroup-3 {
+	visibility: hidden;
 }
 
 .mainmessage p,
@@ -2008,7 +2024,7 @@ a.ilink.yours {
 	white-space: pre;
 	overflow: hidden;
 }
-.allyparty button .picon, 
+.allyparty button .picon,
 .switchmenu button .picon {
 	float: left;
 	margin: -6px -3px -6px -4px;

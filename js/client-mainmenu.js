@@ -23,7 +23,7 @@
 			'keyup input': 'selectTeammate'
 		},
 		initialize: function () {
-			this.$el.addClass('scrollable');
+			this.$el.addClass('unscrollable');
 
 			// left menu 2 (high-res: right, low-res: top)
 			// (created during page load)
@@ -50,10 +50,10 @@
 				buf += '<p><button class="button mainmenu1 big" name="search"><strong>Battle!</strong><br /><small>Find a random opponent</small></button></p></form></div>';
 			}
 
-			buf += '<div class="menugroup"><p><button class="button mainmenu2" name="joinRoom" value="teambuilder">Teambuilder</button></p>';
+			buf += '<div class="menugroup" id="menugroup-2"><p><button class="button mainmenu2" name="joinRoom" value="teambuilder">Teambuilder</button></p>';
 			buf += '<p><button class="button mainmenu3" name="joinRoom" value="ladder">Ladder</button></p></div>';
 
-			buf += '<div class="menugroup"><p><button class="button mainmenu4 onlineonly disabled" name="joinRoom" value="battles">Watch a battle</button></p>';
+			buf += '<div class="menugroup" id="menugroup-3"><p><button class="button mainmenu4 onlineonly disabled" name="joinRoom" value="battles">Watch a battle</button></p>';
 			buf += '<p><button class="button mainmenu5 onlineonly disabled" name="finduser">Find a user</button></p></div>';
 
 			this.$('.mainmenu').html(buf);
