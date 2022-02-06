@@ -186,7 +186,7 @@ const handler: VercelApiHandler = async (request, response) => {
             }
         }
 
-    } catch (err) {
+    } catch (err: any) {
         console.log(err.message);
         // console.log(err.request);
 
