@@ -216,7 +216,7 @@ function toId() {
 		 * domain in order to have access to the correct cookies.
 		 */
 		getActionPHP: function () {
-			var ret = '/api/action';
+			var ret = 'https://pokemon-proxy-api.vercel.app/api/action';
 			return (this.getActionPHP = function () {
 				return ret;
 			})();
