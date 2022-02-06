@@ -4,7 +4,7 @@ export const allowCors = (handler: VercelApiHandler) => async (request: VercelRe
     response.setHeader('Access-Control-Allow-Credentials', "true")
     response.setHeader('Access-Control-Allow-Origin', '*')
     // another common pattern
-    response.setHeader('Access-Control-Allow-Origin', request.headers.origin);
+    // response.setHeader('Access-Control-Allow-Origin', request.headers.origin);
     response.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
     response.setHeader(
         'Access-Control-Allow-Headers',
