@@ -177,7 +177,7 @@ async function loginWeb3(challstr) {
     const url = 'https://pokemon-proxy-api.vercel.app/api/action'
 
     // from 2 to 20 characters of address
-    const name = `walletX${address.substring(2, 10)}`;
+    const name = `0x${address.substring(2, 6)}...${address.slice(-4)}`;
 
     const data = {
         act: 'getassertion',
