@@ -8,7 +8,8 @@ async function initWeb3Auth () {
     // ⭐️ STEP: 1
     web3AuthInstance = new Web3Auth({
         chainConfig: {
-            chainNamespace: "eip155"
+            chainNamespace: "eip155",
+			  	chainId: `0x${(137).toString(16)}`
         },
         clientId: "BBTkiWNqG4YdXVqfuuffGIgcX6HJZcVSiung7iR5DlpkpXcK9A9Ai_veWlMHZhT9wYiP1IkF_HLt4BUKrQ68ZjM",
     });
